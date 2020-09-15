@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bsoft.template.mapper.system.DicMapper">
+    <resultMap id="dicMap" type="Dic">
+        <id property="id" column="id" />
+        <result property="code" column="code" />
+        <result property="name" column="name" />
+        <result property="description" column="description" />
+        <collection property="dicDetails" column="code" ofType="DicDetails" select="getDicDetails" />
+    </resultMap>
+
+    <insert id="saveDicDetails">
+        insert into dic_details (code, `key`, label, sort)
+            value(
+                #{code,jdbcType=VARCHAR},
+                #{key,jdbcType=VARCHAR},
+                #{label,jdbcType=VARCHAR},
+                #{sort,jdbcType=INTEGER}
+            )
+    </insert>
+    <select id="getDicDetails" resultType="DicDetails">
+        select * from dic_details where code = #{code}
+    </select>
+    <delete id="removeDicDetails">
+        delete from dic_details where code = #{code}
+    </delete>
+    <select id="count" resultType="int">
+        select count(*) from dic where code = #{code}
+    </select>
+    <select id="getDicList" resultMap="dicMap">
+        select * from dic
+        <where>
+            <if test="params.code != null and params.code != ''">
+                and code = #{params.code}
+            </if>
+            <if test="params.name != null and params.name != ''">
+                and name = #{params.name}
+            </if>
+            <if test="params.description != null and params.description != ''">
+                and description = #{params.description}
+            </if>
+        </where>
+    </select>
+    <select id="getDic" resultMap="dicMap">
+        select * from dic
+        where code = #{code}
+    </select>
+
+</mapper>
